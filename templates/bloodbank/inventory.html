@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Blood Bank - FloraCare{% endblock %}
+{% block content %}
+<h2>Blood Inventory {% if blood_group_filter %}(blood group: {{ blood_group_filter }}){% endif %}{% if city_filter %} | City: {{ city_filter }}{% endif %}</h2>
+<a href="{% url 'blood_request' %}" class="btn btn-primary mb-3">Request Blood</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Blood Group</th>
+            <th>Location</th>
+            <th>City</th>
+            <th>Units Available</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inventory in inventories %}
+        <tr>
+            <td>{{ inventory.blood_group }}</td>
+            <td>{{ inventory.location_name }}</td>
+            <td>{{ inventory.city }}</td>
+            <td>{{ inventory.units_available }}</td>
+            <td>{{ inventory.last_updated }}</td>
+            <td>
+                <a href="{% url 'blood_request_detail' inventory.pk %}" class="btn btn-sm btn-outline-secondary">Request</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No blood inventory found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form method="get" class="d-flex mb-3 gap-2">
+    <select name="blood_group" class="form-control">
+        <option value="">All Blood Groups</option>
+        {% for bg in blood_groups %}
+        <option value="{{ bg }}" {% if blood_group_filter == bg|yesno }selected{% endif %}>{{ bg }}</option>
+        {% endfor %}
+    </select>
+    <input type="text" name="city" class="form-control" value="{{ city_filter|default:'' }}" placeholder="City">
+    <button type="submit" class="btn btn-outline-secondary">Filter</button>
+</form>
+
+<div class="mt-3">
+    <h3>Blood Units by Group</h3>
+    <div class="row">
+        {% for blood_group, total in blood_units_by_group.items %}
+        <div class="col-4 mb-2">
+            <div class="p-3 rounded text-center">
+                <small>{{ blood_group }}</small>
+                <h4>{{ total|default:0 }}</h4>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

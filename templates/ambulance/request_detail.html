@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Ambulance Request Detail - FloraCare{% endblock %}
+{% block content %}
+<h2>Ambulance Request Detail</h2>
+<p><strong>Patient Name:</strong> {{ request.patient_name }}</p>
+<p><strong>Phone:</strong> {{ request.phone }}</p>
+<p><strong>Pickup Location:</strong> {{ request.pickup_location }}</p>
+<p><strong>Pickup Coordinates:</strong> ({{ request.pickup_latitude }}, {{ request.pickup_longitude }})</p>
+<p><strong>Status:</strong> {{ request.get_status_display }}</p>
+<p><strong>Requested At:</strong> {{ request.requested_at }}</p>
+
+{% if request.pickup_latitude and request.pickup_longitude and pickup_lat and pickup_lon %}
+<div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+<script>
+    var map = L.map('map').setView([{{ request.pickup_latitude }}, {{ request.pickup_longitude }}], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    // Pickup marker
+    L.marker([{{ request.pickup_latitude }}, {{ request.pickup_longitude }}]).addTo(map)
+        .bindPopup("<strong>Pickup Location</strong>");
+
+    {% for unit, distance in units_with_distance|default:[] %}
+    var icon = L.icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+    });
+
+    L.marker([{{ unit.latitude }}, {{ unit.longitude }}], {icon: icon})
+        .addTo(map)
+        .bindPopup("<strong>{{ unit.unit_name }}</strong><br>Distance: {{ distance|round:2 }} km");
+    {% endfor %}
+</script>
+{% endif %}
+
+<a href="{% url 'ambulance_request_list' %}" class="btn btn-secondary mt-3">Back to List</a>
+{% endblock %}

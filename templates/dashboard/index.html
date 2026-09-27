@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - FloraCare{% endblock %}
+{% block content %}
+<h2>Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-6 mb-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Total Patients</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ total_patients }}</h5>
+                <p class="card-text">Registered patients</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 mb-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Total Blood Units</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ total_blood_units }}</h5>
+                <p class="card-text">Available units</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Ambulance Available</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ ambulance_available }}</h5>
+                <p class="card-text">Available units</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 mb-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-header">Ambulance Busy</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ ambulance_busy }}</h5>
+                <p class="card-text">Busy units</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Status Pie Chart -->
+<div class="mb-4">
+    <h3>Appointment Status Distribution</h3>
+    <canvas id="appointmentStatusChart" width="400" height="200"></canvas>
+</div>
+
+<script>
+    // Appointment Status Pie Chart
+    var ctx1 = document.getElementById('appointmentStatusChart').getContext('2d');
+    var appointmentStatusChart = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: {{ status_labels|tojson }},
+            datasets: [{
+                label: 'Appointment Status',
+                data: {{ status_data|tojson }},
+                backgroundColor: [
+                    '#4e73df',
+                    '#1cc88a',
+                    '#36b9cc',
+                    '#f6c23e'
+                ]
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true
+        }
+    });
+</script>
+
+<!-- Blood Inventory Bar Chart -->
+<div>
+    <h3>Blood Inventory by Group</h3>
+    <canvas id="bloodInventoryChart" width="400" height="200"></canvas>
+</div>
+
+<script>
+    // Blood Inventory Bar Chart
+    var ctx2 = document.getElementById('bloodInventoryChart').getContext('2d');
+    var bloodInventoryChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: {{ blood_group_labels|tojson }},
+            datasets: [{
+                label: 'Units Available',
+                data: {{ blood_group_values|tojson }},
+                backgroundColor: [
+                    '#4e73df',
+                    '#1cc88a',
+                    '#36b9cc',
+                    '#f6c23e',
+                    '#e74a3b',
+                    '#36b9cc',
+                    '#1cc88a',
+                    '#f6c23e'
+                ]
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}

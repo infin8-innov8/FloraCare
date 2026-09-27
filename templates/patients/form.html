@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{% if pk %}Edit Patient{% else %}Register Patient{% endif %}{% endblock %}
+{% block content %}
+<h2>{% if pk %}Edit Patient{% else %}Register Patient{% endif %}</h2>
+<form method="post" class="p-3">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" value="{{ form.name.value|default:'' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Age</label>
+        <input type="number" name="age" class="form-control" value="{{ form.age.value|default:'' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Gender</label>
+        <select name="gender" class="form-control" required>
+            <option value="M" {{ "selected" if form.gender.value == 'M' else "" }}">Male</option>
+            <option value="F" {{ "selected" if form.gender.value == 'F' else "" }}">Female</option>
+            <option value="O" {{ "selected" if form.gender.value == 'O' else "" }}">Other</option>
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label>Phone</label>
+        <input type="text" name="phone" class="form-control" value="{{ form.phone.value|default:'' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Address</label>
+        <textarea name="address" class="form-control" rows="3">{{ form.address.value|default:'' }}</textarea>
+    </div>
+    
+    <div class="mb-3">
+        <label>Blood Group</label>
+        <select name="blood_group" class="form-control">
+            <option value="" {{ "selected" if not form.blood_group.value else "" }}>-- Select --</option>
+            <option value="A+" {{ "selected" if form.blood_group.value == 'A+' else "" }}">A+</option>
+            <option value="A-" {{ "selected" if form.blood_group.value == 'A-' else "" }}">A-</option>
+            <option value="B+" {{ "selected" if form.blood_group.value == 'B+' else "" }}">B+</option>
+            <option value="B-" {{ "selected" if form.blood_group.value == 'B-' else "" }}">B-</option>
+            <option value="AB+" {{ "selected" if form.blood_group.value == 'AB+' else "" }}">AB+</option>
+            <option value="AB-" {{ "selected" if form.blood_group.value == 'AB-' else "" }}">AB-</option>
+            <option value="O+" {{ "selected" if form.blood_group.value == 'O+' else "" }}">O+</option>
+            <option value="O-" {{ "selected" if form.blood_group.value == 'O-' else "" }}">O-</option>
+        </select>
+    </div>
+    
+    <div class="d-grid gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">{% if pk %}Update{% else %}Register{% endif %}</button>
+        <a href="{% url 'patient_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

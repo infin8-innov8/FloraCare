@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Patient Detail - FloraCare{% endblock %}
+{% block content %}
+<h2>Patient Detail: {{ patient.name }}</h2>
+<p><strong>Age:</strong> {{ patient.age }}</p>
+<p><strong>Gender:</strong> {{ patient.get_gender_display }}</p>
+<p><strong>Phone:</strong> {{ patient.phone }}</p>
+<p><strong>Address:</strong> {{ patient.address }}</p>
+<p><strong>Blood Group:</strong> {{ patient.blood_group|default:"-" }}</p>
+<p><strong>Created At:</strong> {{ patient.created_at }}</p>
+<a href="{% url 'patient_list' %}" class="btn btn-secondary mt-3">Back to List</a>
+{% endblock %}

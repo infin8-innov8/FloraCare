@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Appointment Detail - FloraCare{% endblock %}
+{% block content %}
+<h2>Appointment Detail</h2>
+<p><strong>Patient:</strong> {{ appointment.patient.name }}</p>
+<p><strong>Doctor:</strong> {{ appointment.doctor_name }}</p>
+<p><strong>Scheduled Time:</strong> {{ appointment.scheduled_time }}</p>
+<p><strong>Status:</strong> {{ appointment.get_status_display }}</p>
+<p><strong>Notes:</strong> {{ appointment.notes|default:"-" }}</p>
+<p><strong>Version:</strong> {{ appointment.version }}</p>
+<p><strong>Created At:</strong> {{ appointment.created_at }}</p>
+<a href="{% url 'appointment_list' %}" class="btn btn-secondary mt-3">Back to List</a>
+{% endblock %}

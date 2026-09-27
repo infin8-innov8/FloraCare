@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Blood Requests - FloraCare{% endblock %}
+{% block content %}
+<h2>Blood Requests {% if urgency_filter %}(urgency: {{ urgency_filter }}){% endif %}{% if blood_group_filter %} | Blood Group: {{ blood_group_filter }}{% endif %}{% if city_filter %} | City: {{ city_filter }}{% endif %}</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Requester Name</th>
+            <th>Phone</th>
+            <th>Blood Group</th>
+            <th>City</th>
+            <th>Urgency</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+        <tr>
+            <td>{{ request.requester_name }}</td>
+            <td>{{ request.phone }}</td>
+            <td>{{ request.blood_group }}</td>
+            <td>{{ request.city }}</td>
+            <td>{{ request.get_urgency_display }}</td>
+            <td>{{ request.created_at }}</td>
+            <td>
+                <a href="{% url 'blood_request_detail' request.pk %}" class="btn btn-sm btn-outline-secondary">Detail</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text-center">No requests found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form method="get" class="d-flex mb-3 gap-2">
+    <select name="urgency" class="form-control">
+        <option value="">All Urgency Levels</option>
+        <option value="Low" {% if urgency_filter == 'Low'|yesno }selected{% endif %}>Low</option>
+        <option value="Medium" {% if urgency_filter == 'Medium'|yesno }selected{% endif %}>Medium</option>
+        <option value="High" {% if urgency_filter == 'High'|yesno }selected{% endif %}>High</option>
+    </select>
+    <select name="blood_group" class="form-control">
+        <option value="">All Blood Groups</option>
+        {% for bg in blood_groups %}
+        <option value="{{ bg }}" {% if blood_group_filter == bg|yesno }selected{% endif %}>{{ bg }}</option>
+        {% endfor %}
+    </select>
+    <input type="text" name="city" class="form-control" value="{{ city_filter|default:'' }}" placeholder="City">
+    <button type="submit" class="btn btn-outline-secondary">Filter</button>
+</form>
+{% endblock %}

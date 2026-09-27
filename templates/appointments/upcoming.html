@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Upcoming Appointments - FloraCare{% endblock %}
+{% block content %}
+<h2>Upcoming Appointments</h2>
+<a href="{% url 'appointment_book' %}" class="btn btn-primary mb-3">Book New Appointment</a>
+
+<form method="get" class="d-flex mb-3 gap-2">
+    <input type="date" name="date" class="form-control" value="{{ date_filter|default:'' }}">
+    <select name="status" class="form-control">
+        <option value="">All Statuses</option>
+        <option value="Scheduled" {% if status_filter == 'Scheduled'|yesno }selected{% endif %}>Scheduled</option>
+        <option value="Completed" {% if status_filter == 'Completed'|yesno }selected{% endif %}>Completed</option>
+        <option value="Cancelled" {% if status_filter == 'Cancelled'|yesno }selected{% endif %}>Cancelled</option>
+        <option value="No-show" {% if status_filter == 'No-show'|yesno }selected{% endif %}>No-show</option>
+    </select>
+    <input type="text" name="doctor" class="form-control" value="{{ doctor_filter|default:'' }}" placeholder="Doctor name">
+    <button type="submit" class="btn btn-outline-secondary mt-1">Filter</button>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Scheduled Time</th>
+            <th>Status</th>
+            <th>Version</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for appointment in appointments %}
+        <tr>
+            <td>{{ appointment.patient.name }}</td>
+            <td>{{ appointment.doctor_name }}</td>
+            <td>{{ appointment.scheduled_time }}</td>
+            <td>{{ appointment.get_status_display }}</td>
+            <td>{{ appointment.version }}</td>
+            <td>
+                <a href="{% url 'appointment_update_status' appointment.pk %}" class="btn btn-sm btn-outline-primary">Update Status</a>
+                <a href="{% url 'appointment_detail' appointment.pk %}" class="btn btn-sm btn-outline-secondary">Detail</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No appointments found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="mt-3">
+    <h3>Today's Metrics</h3>
+    <div class="row">
+        {% for status_name, count in metrics.items %}
+        <div class="col-3 mb-2">
+            <div class="p-3 rounded text-center">
+                <small>{{ status_name }}</small>
+                <h4>{{ count|default:0 }}</h4>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

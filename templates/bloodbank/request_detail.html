@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Blood Request Detail - FloraCare{% endblock %}
+{% block content %}
+<h2>Blood Request Detail</h2>
+<p><strong>Requester Name:</strong> {{ request.requester_name }}</p>
+<p><strong>Phone:</strong> {{ request.phone }}</p>
+<p><strong>Blood Group:</strong> {{ request.blood_group }}</p>
+<p><strong>City:</strong> {{ request.city }}</p>
+<p><strong>Urgency:</strong> {{ request.get_urgency_display }}</p>
+<p><strong>Created At:</strong> {{ request.created_at }}</p>
+<a href="{% url 'bloodbank_inventory' %}" class="btn btn-secondary mt-3">Back to Inventory</a>
+{% endblock %}

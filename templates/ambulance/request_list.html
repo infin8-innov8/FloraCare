@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Ambulance Requests - FloraCare{% endblock %}
+{% block content %}
+<h2>Ambulance Requests {% if status_filter %}(status: {{ status_filter }}){% endif %}</h2>
+<a href="{% url 'ambulance_request' %}" class="btn btn-primary mb-3">Create New Request</a>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Patient Name</th>
+            <th>Phone</th>
+            <th>Pickup Location</th>
+            <th>Status</th>
+            <th>Requested At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for request in requests %}
+        <tr>
+            <td>{{ request.patient_name }}</td>
+            <td>{{ request.phone }}</td>
+            <td>{{ request.pickup_location }}</td>
+            <td>{{ request.get_status_display }}</td>
+            <td>{{ request.requested_at }}</td>
+            <td>
+                <a href="{% url 'ambulance_request_detail' request.pk %}" class="btn btn-sm btn-outline-secondary">Detail</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No requests found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<form method="get" class="d-flex mb-3 gap-2">
+    <select name="status" class="form-control">
+        <option value="">All Statuses</option>
+        <option value="Requested" {% if status_filter == 'Requested'|yesno }selected{% endif %}>Requested</option>
+        <option value="Dispatched" {% if status_filter == 'Dispatched'|yesno }selected{% endif %}>Dispatched</option>
+        <option value="Completed" {% if status_filter == 'Completed'|yesno }selected{% endif %}>Completed</option>
+    </select>
+    <button type="submit" class="btn btn-outline-secondary">Filter</button>
+</form>
+{% endblock %}

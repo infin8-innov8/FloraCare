@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Request Blood{% endblock %}
+{% block content %}
+<h2>Request Blood</h2>
+<form method="post" class="p-3">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label>Requester Name</label>
+        <input type="text" name="requester_name" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Phone</label>
+        <input type="text" name="phone" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Blood Group</label>
+        <select name="blood_group" class="form-control" required>
+            <option value="">-- Select --</option>
+            <option value="A+" {{ "selected" if form.blood_group.value == 'A+' else "" }}">A+</option>
+            <option value="A-" {{ "selected" if form.blood_group.value == 'A-' else "" }}">A-</option>
+            <option value="B+" {{ "selected" if form.blood_group.value == 'B+' else "" }}">B+</option>
+            <option value="B-" {{ "selected" if form.blood_group.value == 'B-' else "" }}">B-</option>
+            <option value="AB+" {{ "selected" if form.blood_group.value == 'AB+' else "" }}">AB+</option>
+            <option value="AB-" {{ "selected" if form.blood_group.value == 'AB-' else "" }}">AB-</option>
+            <option value="O+" {{ "selected" if form.blood_group.value == 'O+' else "" }}">O+</option>
+            <option value="O-" {{ "selected" if form.blood_group.value == 'O-' else "" }}">O-</option>
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label>City</label>
+        <input type="text" name="city" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Urgency</label>
+        <select name="urgency" class="form-control">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+        </select>
+    </div>
+    
+    <div class="d-grid gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a href="{% url 'bloodbank_inventory' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

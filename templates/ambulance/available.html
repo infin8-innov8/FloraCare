@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Available Ambulances - FloraCare{% endblock %}
+{% block content %}
+<h2>Available Ambulances</h2>
+
+<form method="get" class="d-flex mb-3 gap-2">
+    <input type="hidden" name="pickup_lat" value="{{ pickup_lat|default:0 }}">
+    <input type="hidden" name="pickup_lon" value="{{ pickup_lon|default:0 }}">
+    <button type="submit" class="btn btn-outline-secondary">Refresh Distances</button>
+</form>
+
+<div class="mb-4">
+    <strong>Pickup Location:</strong> ({{ pickup_lat|default:0 }}, {{ pickup_lon|default:0 }}) km from units
+</div>
+
+<h3>Available Ambulances (sorted by distance):</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Unit</th>
+            <th>Distance (km)</th>
+            <th>Current Location</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for unit, distance in units_with_distance %}
+        <tr>
+            <td>{{ unit.unit_name }}</td>
+            <td>{{ distance|round:2 }}</td>
+            <td>{{ unit.current_location }}</td>
+            <td>{{ unit.get_is_available_display }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center">No available ambulances.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if units_with_distance %}
+<div id="map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+<script>
+    // Initialize Leaflet map
+    var map = L.map('map').setView([{{ pickup_lat|default:0 }}, {{ pickup_lon|default:0 }}], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    {% for unit, distance in units_with_distance[:5] %}
+    var icon = L.icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon.png',
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-icon@2x.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+        shadowSize: [41, 41]
+    });
+
+    L.marker([{{ unit.latitude }}, {{ unit.longitude }}], {icon: icon})
+        .addTo(map)
+        .bindPopup("<strong>{{ unit.unit_name }}</strong><br>Distance: {{ distance|round:2 }} km<br>Location: {{ unit.current_location }}");
+    {% endfor %}
+
+    {% if pickup_lat and pickup_lon and pickup_lat != 0 and pickup_lon != 0 %}
+    L.marker([{{ pickup_lat }}, {{ pickup_lon }}]).addTo(map)
+        .bindPopup("<strong>Pickup Location</strong>");
+    {% endif %}
+</script>
+{% endif %}
+{% endblock %}

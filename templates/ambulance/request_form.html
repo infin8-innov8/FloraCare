@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Request Ambulance{% endblock %}
+{% block content %}
+<h2>Request Ambulance</h2>
+<form method="post" class="p-3">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label>Patient Name</label>
+        <input type="text" name="patient_name" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Phone</label>
+        <input type="text" name="phone" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Pickup Location</label>
+        <input type="text" name="pickup_location" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Pickup Latitude</label>
+        <input type="number" step="any" name="pickup_latitude" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Pickup Longitude</label>
+        <input type="number" step="any" name="pickup_longitude" class="form-control" required>
+    </div>
+    
+    <div class="mb-3">
+        <label>Status</label>
+        <select name="status" class="form-control">
+            <option value="Requested" selected>Requested</option>
+            <option value="Dispatched">Dispatched</option>
+            <option value="Completed">Completed</option>
+        </select>
+    </div>
+    
+    <div class="d-grid gap-2 mt-3">
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a href="{% url 'ambulance_request_list' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}
